@@ -1,0 +1,17 @@
+{
+    "name": "mijos/pattern-pay",
+    "description": "Librairie de paiement PHP",
+    "type": "library",
+    "autoload": {
+        "psr-4": {
+            "Mijos\\PatternPay\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Mijosed",
+            "email": "mijosed@gmail.com"
+        }
+    ],
+    "require": {}
+}
