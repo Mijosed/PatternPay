@@ -2,10 +2,11 @@
 
 namespace PatternPay\Gateways;
 
-use PatternPay\Factories\TransactionFactory;
 use PatternPay\Interfaces\PaymentGatewayInterface;
+use PatternPay\Interfaces\TransactionFactory;
 use PatternPay\Transactions\Transaction;
 use PatternPay\Transactions\TransactionResult;
+use PatternPay\Transactions\TransactionStatus;
 use Stripe\Exception\ApiErrorException;
 use Stripe\Stripe;
 
@@ -37,10 +38,10 @@ class StripeGateway implements PaymentGatewayInterface, TransactionFactory{
                 'source' => 'tok_visa', // Replace with actual token or payment method ID
             ]);
             $transaction->setTransactionId($charge->id);
-            $transaction->setStatus('succeeded');
+            $transaction->setStatus(TransactionStatus::SUCCESS);
             return new TransactionResult(true, 'Transaction successful: ' . $charge->id);
         } catch (ApiErrorException $e) {
-            $transaction->setStatus('failed');
+            $transaction->setStatus(TransactionStatus::FAILED);
             return new TransactionResult(false, 'Transaction failed: ' . $e->getMessage());
         }
     }
@@ -51,7 +52,7 @@ class StripeGateway implements PaymentGatewayInterface, TransactionFactory{
             $refund = \Stripe\Refund::create([
                 'charge' => $charge->id,
             ]);
-            $transaction->setStatus('cancelled');
+            $transaction->setStatus(TransactionStatus::CANCELLED);
             return new TransactionResult(true, 'Transaction cancelled successfully: ' . $refund->id);
         } catch (ApiErrorException $e) {
             return new TransactionResult(false, 'Cancellation failed: ' . $e->getMessage());
@@ -60,43 +61,33 @@ class StripeGateway implements PaymentGatewayInterface, TransactionFactory{
 
     public function getTransactionStatus(Transaction $transaction): string {
         try {
-            // Récupérer l'ID de la transaction depuis l'objet Transaction
             $transactionId = $transaction->getTransactionId();
-    
-            // Interroger l'API Stripe pour obtenir les détails de la transaction
             $stripeTransaction = \Stripe\Charge::retrieve($transactionId);
-    
-            // Vérifier le statut de paiement
+
             if (!$stripeTransaction->paid) {
-                return 'pending'; // Transaction en attente de paiement
+                return TransactionStatus::PENDING;
             }
-    
-            // Vérifier le statut de capture
+
             if (!$stripeTransaction->captured) {
-                return 'authorized'; // Transaction autorisée mais non encore capturée
+                return TransactionStatus::PENDING;
             }
-    
-            // Vérifier le statut de remboursement
+
             if ($stripeTransaction->refunded) {
-                return 'refunded'; // Transaction remboursée
+                return TransactionStatus::REFUNDED;
             }
-    
-            // Déterminer le statut final de la transaction
+
             switch ($stripeTransaction->status) {
                 case 'succeeded':
-                    return 'succeeded'; // Transaction réussie
+                    return TransactionStatus::PENDING;
                 case 'failed':
-                    return 'failed'; // Transaction échouée
+                    return TransactionStatus::FAILED;
                 case 'canceled':
-                    return 'canceled'; // Transaction annulée
+                    return TransactionStatus::CANCELLED;
                 default:
-                    return 'unknown'; // Autres cas non prévus
+                    return TransactionStatus::PENDING;
             }
         } catch (ApiErrorException $e) {
-            // Gérer les erreurs d'API Stripe
-            // Vous pouvez journaliser l'erreur ou retourner un statut par défaut
-            return 'unknown';
+            return TransactionStatus::PENDING;
         }
     }
-    
 }

@@ -1,6 +1,6 @@
 <?php
 
-namespace PatternPay\Factories;
+namespace PatternPay\Interfaces;
 
 use PatternPay\Transactions\Transaction;
 

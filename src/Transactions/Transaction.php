@@ -33,6 +33,9 @@ class Transaction {
     }
 
     public function setStatus(string $status): void {
+        if (!in_array($status, [TransactionStatus::PENDING, TransactionStatus::SUCCESS, TransactionStatus::FAILED, TransactionStatus::CANCELLED])) {
+            throw new \InvalidArgumentException("Invalid transaction status: $status");
+        }
         $this->status = $status;
     }
 

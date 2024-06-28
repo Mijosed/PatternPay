@@ -2,8 +2,8 @@
 
 namespace PatternPay;
 
-use PatternPay\Factories\TransactionFactory;
 use PatternPay\Interfaces\PaymentGatewayInterface;
+use PatternPay\Interfaces\TransactionFactory;
 use PatternPay\Transactions\Transaction;
 use PatternPay\Transactions\TransactionResult;
 
