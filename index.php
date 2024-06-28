@@ -1,27 +1,29 @@
 <?php
 
+require_once __DIR__ . '/../vendor/autoload.php';
+use Mijos\PatternPay\PaymentManager;
 use Mijos\PatternPay\Gateways\StripeGateway;
 
-require 'vendor/autoload.php';
-
+// Création du gestionnaire de paiement
+$paymentManager = new PaymentManager();
 
 try {
-    // Initialisation de la passerelle Stripe avec les identifiants de connexion
-    $stripe = new StripeGateway();
-    $stripe->initialize(['api_key' => 'sk_test_51PQtwjCg9Drn5vsL42h9um7osBfE2IMlp7qOHHNx32myT9FTSpOahsQ4EKlyOsIfG2DRjMVyCwNYhdClIleZMS7q00TRF5feKU']);
+    // Ajout de Stripe
+    $stripeGateway = new StripeGateway();
+    $stripeGateway->initialize(['api_key' => 'sk_test_51PW1WvJFP4C1ZqxZY7XbvSvZ2rN0h9eFrTc5R5MSg1Lgd1IiFVmGpP9MsWd0zTgBvLeIKMG6d595OZci6Q57lJm5003oNMCTpB']);
+    $paymentManager->addGateway('stripe', $stripeGateway);
 
-    // Création d'une transaction
-    $transaction = $stripe->createTransaction(100.0, 'USD', 'Test transaction');
+    // Créer et exécution de la transaction
+    $transaction = $stripeGateway->createTransaction(100.00, 'USD', 'Payment description');
+    $result = $stripeGateway->executeTransaction($transaction);
 
-    // Exécution de la transaction
-    $result = $stripe->executeTransaction($transaction);
+    echo "Transaction Status: " . ($result->isSuccess() ? 'Success' : 'Failure') . "\n";
+    echo "Transaction Message: " . $result->getMessage() . "\n";
 
-    // Affichage du résultat
-    if ($result->isSuccess()) {
-        echo "Paiement réussi : " . $result->getMessage();
-    } else {
-        echo "Échec du paiement : " . $result->getMessage();
-    }
+    // Annulation de la transaction
+    $cancelResult = $stripeGateway->cancelTransaction($transaction);
+    echo "Transaction Cancellation Status: " . ($cancelResult->isSuccess() ? 'Success' : 'Failure') . "\n";
+    echo "Cancellation Message: " . $cancelResult->getMessage() . "\n";
 } catch (Exception $e) {
     echo "Erreur : " . $e->getMessage();
 }

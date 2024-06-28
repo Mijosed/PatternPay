@@ -35,15 +35,26 @@ class StripeGateway implements PaymentGatewayInterface {
                 'description' => $transaction->getDescription(),
                 'source' => 'tok_visa', // Replace with actual token or payment method ID
             ]);
+            $transaction->setTransactionId($charge->id);
+            $transaction->setStatus('succeeded');
             return new TransactionResult(true, 'Transaction successful: ' . $charge->id);
         } catch (ApiErrorException $e) {
+            $transaction->setStatus('failed');
             return new TransactionResult(false, 'Transaction failed: ' . $e->getMessage());
         }
     }
 
-    public function cancelTransaction(Transaction $transaction): bool {
-        // Implémentation de l'annulation de transaction
-        return true;
+    public function cancelTransaction(Transaction $transaction): TransactionResult {
+        try {
+            $charge = \Stripe\Charge::retrieve($transaction->getTransactionId());
+            $refund = \Stripe\Refund::create([
+                'charge' => $charge->id,
+            ]);
+            $transaction->setStatus('cancelled');
+            return new TransactionResult(true, 'Transaction cancelled successfully: ' . $refund->id);
+        } catch (ApiErrorException $e) {
+            return new TransactionResult(false, 'Cancellation failed: ' . $e->getMessage());
+        }
     }
 
     public function getTransactionStatus(Transaction $transaction): string {

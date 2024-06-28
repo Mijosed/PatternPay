@@ -3,16 +3,17 @@
 namespace Mijos\PatternPay\Transactions;
 
 class Transaction {
-    private float $amount;
-    private string $currency;
-    private string $description;
-    private string $status;
+    private $amount;
+    private $currency;
+    private $description;
+    private $status;
+    private $transactionId;
 
     public function __construct(float $amount, string $currency, string $description) {
         $this->amount = $amount;
         $this->currency = $currency;
         $this->description = $description;
-        $this->status = 'pending';
+        $this->status = TransactionStatus::PENDING;
     }
 
     public function getAmount(): float {
@@ -33,5 +34,13 @@ class Transaction {
 
     public function setStatus(string $status): void {
         $this->status = $status;
+    }
+
+    public function getTransactionId(): ?string {
+        return $this->transactionId;
+    }
+
+    public function setTransactionId(string $transactionId): void {
+        $this->transactionId = $transactionId;
     }
 }
