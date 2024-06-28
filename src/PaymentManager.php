@@ -1,8 +1,8 @@
 <?php
 
-namespace Mijos\PatternPay;
+namespace PatternPay;
 
-use Mijos\PatternPay\Interfaces\PaymentGatewayInterface;
+use PatternPay\Interfaces\PaymentGatewayInterface;
 
 class PaymentManager {
     private $gateways = [];

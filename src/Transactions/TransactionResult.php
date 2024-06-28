@@ -1,6 +1,6 @@
 <?php
 
-namespace Mijos\PatternPay\Transactions;
+namespace PatternPay\Transactions;
 
 class TransactionResult {
     private bool $success;

@@ -1,10 +1,10 @@
 <?php
 
-namespace Mijos\PatternPay\Gateways;
+namespace PatternPay\Gateways;
 
-use Mijos\PatternPay\Interfaces\PaymentGatewayInterface;
-use Mijos\PatternPay\Transactions\Transaction;
-use Mijos\PatternPay\Transactions\TransactionResult;
+use PatternPay\Interfaces\PaymentGatewayInterface;
+use PatternPay\Transactions\Transaction;
+use PatternPay\Transactions\TransactionResult;
 use Stripe\Exception\ApiErrorException;
 use Stripe\Stripe;
 

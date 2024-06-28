@@ -1,8 +1,8 @@
 <?php
 
-require_once __DIR__ . '/../vendor/autoload.php';
-use Mijos\PatternPay\PaymentManager;
-use Mijos\PatternPay\Gateways\StripeGateway;
+require_once __DIR__ . './vendor/autoload.php';
+use PatternPay\PaymentManager;
+use PatternPay\Gateways\StripeGateway;
 
 // Création du gestionnaire de paiement
 $paymentManager = new PaymentManager();
@@ -20,10 +20,10 @@ try {
     echo "Transaction Status: " . ($result->isSuccess() ? 'Success' : 'Failure') . "\n";
     echo "Transaction Message: " . $result->getMessage() . "\n";
 
-    // Annulation de la transaction
-    $cancelResult = $stripeGateway->cancelTransaction($transaction);
-    echo "Transaction Cancellation Status: " . ($cancelResult->isSuccess() ? 'Success' : 'Failure') . "\n";
-    echo "Cancellation Message: " . $cancelResult->getMessage() . "\n";
+    // // Annulation de la transaction
+    // $cancelResult = $stripeGateway->cancelTransaction($transaction);
+    // echo "Transaction Cancellation Status: " . ($cancelResult->isSuccess() ? 'Success' : 'Failure') . "\n";
+    // echo "Cancellation Message: " . $cancelResult->getMessage() . "\n";
 } catch (Exception $e) {
     echo "Erreur : " . $e->getMessage();
 }

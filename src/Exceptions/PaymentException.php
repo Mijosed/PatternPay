@@ -1,6 +1,6 @@
 <?php
 
-namespace Mijos\PatternPay\Exceptions;
+namespace PatternPay\Exceptions;
 
 use Exception;
 
