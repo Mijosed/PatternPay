@@ -2,13 +2,14 @@
 
 namespace PatternPay\Gateways;
 
+use PatternPay\Factories\TransactionFactory;
 use PatternPay\Interfaces\PaymentGatewayInterface;
 use PatternPay\Transactions\Transaction;
 use PatternPay\Transactions\TransactionResult;
 use Stripe\Exception\ApiErrorException;
 use Stripe\Stripe;
 
-class StripeGateway implements PaymentGatewayInterface {
+class StripeGateway implements PaymentGatewayInterface, TransactionFactory{
     private $apiKey;
 
     public function initialize(array $config): void {
@@ -58,7 +59,44 @@ class StripeGateway implements PaymentGatewayInterface {
     }
 
     public function getTransactionStatus(Transaction $transaction): string {
-        // Implémentation de la récupération du statut de la transaction
-        return 'succeeded';
+        try {
+            // Récupérer l'ID de la transaction depuis l'objet Transaction
+            $transactionId = $transaction->getTransactionId();
+    
+            // Interroger l'API Stripe pour obtenir les détails de la transaction
+            $stripeTransaction = \Stripe\Charge::retrieve($transactionId);
+    
+            // Vérifier le statut de paiement
+            if (!$stripeTransaction->paid) {
+                return 'pending'; // Transaction en attente de paiement
+            }
+    
+            // Vérifier le statut de capture
+            if (!$stripeTransaction->captured) {
+                return 'authorized'; // Transaction autorisée mais non encore capturée
+            }
+    
+            // Vérifier le statut de remboursement
+            if ($stripeTransaction->refunded) {
+                return 'refunded'; // Transaction remboursée
+            }
+    
+            // Déterminer le statut final de la transaction
+            switch ($stripeTransaction->status) {
+                case 'succeeded':
+                    return 'succeeded'; // Transaction réussie
+                case 'failed':
+                    return 'failed'; // Transaction échouée
+                case 'canceled':
+                    return 'canceled'; // Transaction annulée
+                default:
+                    return 'unknown'; // Autres cas non prévus
+            }
+        } catch (ApiErrorException $e) {
+            // Gérer les erreurs d'API Stripe
+            // Vous pouvez journaliser l'erreur ou retourner un statut par défaut
+            return 'unknown';
+        }
     }
+    
 }
