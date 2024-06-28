@@ -1,6 +1,9 @@
 <?php
 
-namespace PaymentGateway;
+namespace Mijos\PatternPay\Interfaces;
+
+use Mijos\PatternPay\Transactions\Transaction;
+use Mijos\PatternPay\Transactions\TransactionResult;
 
 interface PaymentGatewayInterface {
     public function initialize(array $config): void;

@@ -1,12 +1,12 @@
 <?php
 
-namespace PaymentGateway\Stripe;
+namespace Mijos\PatternPay\Gateways;
 
-use PaymentGateway\PaymentGatewayInterface;
-use PaymentGateway\Transaction;
-use PaymentGateway\TransactionResult;
-use Stripe\Stripe;
+use Mijos\PatternPay\Interfaces\PaymentGatewayInterface;
+use Mijos\PatternPay\Transactions\Transaction;
+use Mijos\PatternPay\Transactions\TransactionResult;
 use Stripe\Exception\ApiErrorException;
+use Stripe\Stripe;
 
 class StripeGateway implements PaymentGatewayInterface {
     private $apiKey;

@@ -1,7 +1,9 @@
 <?php
+
+use Mijos\PatternPay\Gateways\StripeGateway;
+
 require 'vendor/autoload.php';
 
-use PaymentGateway\Stripe\StripeGateway;
 
 try {
     // Initialisation de la passerelle Stripe avec les identifiants de connexion

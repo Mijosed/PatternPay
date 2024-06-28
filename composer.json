@@ -4,11 +4,8 @@
     "type": "library",
     "autoload": {
         "psr-4": {
-            "PaymentGateway\\": "src/PaymentGateway/"
+            "Mijos\\PatternPay\\": "src/"
         }
-    },
-    "require-dev": {
-        "phpunit/phpunit": "^9.0"
     },
     "authors": [
         {

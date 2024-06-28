@@ -1,6 +1,6 @@
 <?php
 
-namespace PaymentGateway;
+namespace Mijos\PatternPay\Transactions;
 
 class TransactionResult {
     private bool $success;
