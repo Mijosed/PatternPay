@@ -4,7 +4,7 @@
     "type": "library",
     "autoload": {
         "psr-4": {
-            "Mijos\\PatternPay\\": "src/"
+            "PatternPay\\": "src/"
         }
     },
     "authors": [
@@ -13,5 +13,8 @@
             "email": "mijosed@gmail.com"
         }
     ],
-    "require": {}
+    "require": {
+        "stripe/stripe-php": "^15.0",
+        "phpmailer/phpmailer": "^6.9"
+    }
 }
