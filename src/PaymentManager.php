@@ -3,12 +3,13 @@
 namespace PatternPay;
 
 use PatternPay\Interfaces\PaymentGatewayInterface;
-use PatternPay\Interfaces\TransactionFactory;
+use PatternPay\Interfaces\TransactionObserverInterface;
 use PatternPay\Transactions\Transaction;
 use PatternPay\Transactions\TransactionResult;
 
 class PaymentManager {
     private $gateways = [];
+    private $observers = [];
 
     public function addGateway(string $name, PaymentGatewayInterface $gateway): void {
         $this->gateways[$name] = $gateway;
@@ -21,10 +22,12 @@ class PaymentManager {
     public function removeGateway(string $name): void {
         unset($this->gateways[$name]);
     }
-
+    
     public function executeTransaction(string $gatewayName, Transaction $transaction): TransactionResult {
         if (isset($this->gateways[$gatewayName])) {
-            return $this->gateways[$gatewayName]->executeTransaction($transaction);
+            $result = $this->gateways[$gatewayName]->executeTransaction($transaction);
+            $this->notifyObservers($transaction);
+            return $result;
         } else {
             throw new \InvalidArgumentException("Gateway '$gatewayName' not found.");
         }
@@ -32,7 +35,9 @@ class PaymentManager {
 
     public function cancelTransaction(string $gatewayName, Transaction $transaction): TransactionResult {
         if (isset($this->gateways[$gatewayName])) {
-            return $this->gateways[$gatewayName]->cancelTransaction($transaction);
+            $result = $this->gateways[$gatewayName]->cancelTransaction($transaction);
+            $this->notifyObservers($transaction);
+            return $result;
         } else {
             throw new \InvalidArgumentException("Gateway '$gatewayName' not found.");
         }
@@ -45,12 +50,14 @@ class PaymentManager {
             throw new \InvalidArgumentException("Gateway '$gatewayName' not found.");
         }
     }
-    public function createTransaction(string $gatewayName, float $amount, string $currency, string $description): Transaction {
-        $gateway = $this->getGateway($gatewayName);
-        if ($gateway instanceof TransactionFactory) {
-            return $gateway->createTransaction($amount, $currency, $description);
-        } else {
-            throw new \InvalidArgumentException("Gateway '$gatewayName' does not support transaction creation.");
+
+    public function addObserver(TransactionObserverInterface $observer): void {
+        $this->observers[] = $observer;
+    }
+
+    private function notifyObservers(Transaction $transaction): void {
+        foreach ($this->observers as $observer) {
+            $observer->update($transaction);
         }
     }
 }
