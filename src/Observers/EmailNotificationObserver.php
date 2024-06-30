@@ -7,6 +7,10 @@ use PatternPay\Transactions\Transaction;
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 
+/**
+ * Class EmailNotificationObserver
+ * @package PatternPay\Observers
+ */
 class EmailNotificationObserver implements TransactionObserverInterface {
     private $mailer;
     private $recipientEmail;
@@ -16,10 +20,12 @@ class EmailNotificationObserver implements TransactionObserverInterface {
         $this->recipientEmail = $recipientEmail;
     }
 
+    // Mise à jour d'une transaction à partir d'une transaction 
     public function update(Transaction $transaction): void {
         $status = $transaction->getStatus();
         $message = "Transaction " . $transaction->getTransactionId() . " status updated to " . $status;
 
+        // Envoi d'un e-mail de notification à l'utilisateur 
         try {
             $this->mailer->setFrom('no-reply@yourdomain.com', 'Your App Name');
             $this->mailer->addAddress($this->recipientEmail);
