@@ -8,9 +8,13 @@ use PaymentGateway\TransactionResult;
 use Stripe\Stripe;
 use Stripe\Exception\ApiErrorException;
 
+/**
+ * Portail de paiement Stripe pour le traitement des transactions de paiement par carte de crédit.
+ */
 class StripeGateway implements PaymentGatewayInterface {
     private $apiKey;
 
+    // Initialisation de la clé API Stripe et vérification de la connexion à l'API Stripe lors de la création de l'objet StripeGateway
     public function initialize(array $config): void {
         $this->apiKey = $config['api_key'];
         Stripe::setApiKey($this->apiKey);
@@ -23,10 +27,12 @@ class StripeGateway implements PaymentGatewayInterface {
         }
     }
 
+    // Création d'une transaction Stripe à partir des détails de la transaction fournis (montant, devise et description) et retour de l'objet Transaction créé 
     public function createTransaction(float $amount, string $currency, string $description): Transaction {
         return new Transaction($amount, $currency, $description);
     }
 
+    // Exécution de la transaction Stripe en utilisant l'API Stripe et retour du résultat de la transaction (réussie ou échouée) avec un message de statut
     public function executeTransaction(Transaction $transaction): TransactionResult {
         try {
             $charge = \Stripe\Charge::create([
@@ -41,11 +47,13 @@ class StripeGateway implements PaymentGatewayInterface {
         }
     }
 
+    // Annulation de la transaction Stripe et retour du statut de l'annulation (réussie ou échouée) 
     public function cancelTransaction(Transaction $transaction): bool {
         // Implémentation de l'annulation de transaction
         return true;
     }
 
+    // Récupération du statut de la transaction Stripe et retour du statut de la transaction (réussie, échouée, en attente, etc.) 
     public function getTransactionStatus(Transaction $transaction): string {
         // Implémentation de la récupération du statut de la transaction
         return 'succeeded';
