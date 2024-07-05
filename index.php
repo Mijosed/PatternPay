@@ -12,7 +12,12 @@
         <input type="number" id="amount" name="amount" required>
         <br>
         <label for="currency">Devise :</label>
-        <input type="text" id="currency" name="currency" value="USD" required readonly>
+        <select id="currency" name="currency" required>
+            <option value="USD">USD</option>
+            <option value="EUR">EUR</option>
+            <option value="GBP">GBP</option>
+            <option value="JPY">JPY</option>
+        </select>
         <br>
         <label for="description">Description :</label>
         <input type="text" id="description" name="description" required>
