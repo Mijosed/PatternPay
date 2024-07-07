@@ -15,6 +15,7 @@
     ],
     "require": {
         "stripe/stripe-php": "^15.0",
-        "phpmailer/phpmailer": "^6.9"
+        "phpmailer/phpmailer": "^6.9",
+        "square/square": "^37.1"
     }
 }

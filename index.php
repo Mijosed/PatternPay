@@ -1,9 +1,10 @@
 <?php
 
-require_once __DIR__ . './vendor/autoload.php';
+require_once __DIR__ . '/vendor/autoload.php';
 
 use PatternPay\PaymentManager;
 use PatternPay\Gateways\StripeGateway;
+use PatternPay\Gateways\SquareGateway;
 use PatternPay\Observers\EmailNotificationObserver;
 use PHPMailer\PHPMailer\PHPMailer;
 
@@ -27,17 +28,35 @@ try {
     $stripeGateway->initialize(['api_key' => 'sk_test_51PQtwjCg9Drn5vsL42h9um7osBfE2IMlp7qOHHNx32myT9FTSpOahsQ4EKlyOsIfG2DRjMVyCwNYhdClIleZMS7q00TRF5feKU']);
     $paymentManager->addGateway('stripe', $stripeGateway);
 
+    // Ajout de Square
+    $squareGateway = new SquareGateway();
+    $squareGateway->initialize(['api_key' => 'your_square_api_key']);
+    $paymentManager->addGateway('square', $squareGateway);
+
     // Créer et exécution de la transaction
     $transaction = $stripeGateway->createTransaction(100.00, 'USD', 'Payment description');
 
     $result = $paymentManager->executeTransaction('stripe', $transaction);
     echo "Transaction Message: " . $result->getMessage() . "\n";
 
+    /*
+        $transaction = $squareGateway->createTransaction(50.00, 'USD', 'Payment description for Square');
+        $result = $paymentManager->executeTransaction('square', $transaction);
+        echo "Transaction Message: " . $result->getMessage() . "\n";
+    */
+
     // Annulation de la transaction
     $cancelResult = $paymentManager->cancelTransaction('stripe', $transaction);
     $statusAfterExecution = $paymentManager->getTransactionStatus('stripe', $transaction);
     echo "Transaction Status after execution: " . $statusAfterExecution . "\n";
     echo "Cancellation Message: " . $cancelResult->getMessage() . "\n";
+
+    /*
+        $cancelResult = $paymentManager->cancelTransaction('square', $transaction);
+        $statusAfterCancellation = $paymentManager->getTransactionStatus('square', $transaction);
+        echo "Transaction Status after cancellation: " . $statusAfterCancellation . "\n";
+        echo "Cancellation Message: " . $cancelResult->getMessage() . "\n";
+    */
 } catch (Exception $e) {
     echo "Erreur : " . $e->getMessage();
 }
