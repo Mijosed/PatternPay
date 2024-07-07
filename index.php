@@ -1,62 +1,28 @@
-<?php
-
-require_once __DIR__ . '/vendor/autoload.php';
-
-use PatternPay\PaymentManager;
-use PatternPay\Gateways\StripeGateway;
-use PatternPay\Gateways\SquareGateway;
-use PatternPay\Observers\EmailNotificationObserver;
-use PHPMailer\PHPMailer\PHPMailer;
-
-$phpmailer = new PHPMailer(true);
-$phpmailer->isSMTP();
-$phpmailer->Host = 'sandbox.smtp.mailtrap.io';
-$phpmailer->SMTPAuth = true;
-$phpmailer->Port = 2525;
-$phpmailer->Username = 'username';
-$phpmailer->Password = 'password';
-
-// Création du gestionnaire de paiement
-$paymentManager = new PaymentManager();
-
-// Ajout des observateurs
-$paymentManager->addObserver(new EmailNotificationObserver($phpmailer, 'recipient@example.com'));
-
-try {
-    // Ajout de Stripe
-    $stripeGateway = new StripeGateway();
-    $stripeGateway->initialize(['api_key' => 'sk_test_51PQtwjCg9Drn5vsL42h9um7osBfE2IMlp7qOHHNx32myT9FTSpOahsQ4EKlyOsIfG2DRjMVyCwNYhdClIleZMS7q00TRF5feKU']);
-    $paymentManager->addGateway('stripe', $stripeGateway);
-
-    // Ajout de Square
-    $squareGateway = new SquareGateway();
-    $squareGateway->initialize(['api_key' => 'your_square_api_key']);
-    $paymentManager->addGateway('square', $squareGateway);
-
-    // Créer et exécution de la transaction
-    $transaction = $stripeGateway->createTransaction(100.00, 'USD', 'Payment description');
-
-    $result = $paymentManager->executeTransaction('stripe', $transaction);
-    echo "Transaction Message: " . $result->getMessage() . "\n";
-
-    /*
-        $transaction = $squareGateway->createTransaction(50.00, 'USD', 'Payment description for Square');
-        $result = $paymentManager->executeTransaction('square', $transaction);
-        echo "Transaction Message: " . $result->getMessage() . "\n";
-    */
-
-    // Annulation de la transaction
-    $cancelResult = $paymentManager->cancelTransaction('stripe', $transaction);
-    $statusAfterExecution = $paymentManager->getTransactionStatus('stripe', $transaction);
-    echo "Transaction Status after execution: " . $statusAfterExecution . "\n";
-    echo "Cancellation Message: " . $cancelResult->getMessage() . "\n";
-
-    /*
-        $cancelResult = $paymentManager->cancelTransaction('square', $transaction);
-        $statusAfterCancellation = $paymentManager->getTransactionStatus('square', $transaction);
-        echo "Transaction Status after cancellation: " . $statusAfterCancellation . "\n";
-        echo "Cancellation Message: " . $cancelResult->getMessage() . "\n";
-    */
-} catch (Exception $e) {
-    echo "Erreur : " . $e->getMessage();
-}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interface de Transaction</title>
+</head>
+<body>
+    <h1>Exemple d'utilisation de la librairie avec Stripe</h1>
+    <form action="transaction.php" method="post">
+        <label for="amount">Montant :</label>
+        <input type="number" id="amount" name="amount" required>
+        <br>
+        <label for="currency">Devise :</label>
+        <select id="currency" name="currency" required>
+            <option value="USD">USD</option>
+            <option value="EUR">EUR</option>
+            <option value="GBP">GBP</option>
+            <option value="JPY">JPY</option>
+        </select>
+        <br>
+        <label for="description">Description :</label>
+        <input type="text" id="description" name="description" required>
+        <br>
+        <button type="submit">Payer</button>
+    </form>
+</body>
+</html>

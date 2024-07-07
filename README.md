@@ -67,13 +67,22 @@ $stripeGateway->initialize(['api_key' => 'votre_clé_api_stripe']);
 $paymentManager->addGateway('stripe', $stripeGateway);
 ```
 
-### Exécution d'une Transaction
-
-```php
-$transaction = $stripeGateway->createTransaction(100.00, 'USD', 'Description du paiement');
-$result = $paymentManager->executeTransaction('stripe', $transaction);
-echo "Message de la transaction : " . $result->getMessage() . "\n";
+## Etape à faire pour tester le projet (pour le prof)
+1. Installer les dépendances 
+```sh
+composer install
 ```
+2. Lancer le serveur php
+```sh
+php -S localhost:8000
+```
+3. Une fois sur l'interface graphique, renseigner le montant, la devise et la description de la transaction. (La transaction sera validé puis annulé directement par la suite pour tester le fonctionnement de l'annulation d'une transaction)
+
+![Interface graphique](interface.png)
+
+4. Si une réelle clé Stripe a été mise, vous pouvez vérifier l'état de la transaction dans le menu "Transaction" de votre tableau de bord Stripe
+
+![Tableau de bord Stripe](stripe.png)
 
 ## Conclusion
 PatternPay offre une solution  extensible pour l'intégration de paiements dans vos applications PHP.
