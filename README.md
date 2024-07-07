@@ -80,11 +80,11 @@ php -S localhost:8000
 ```
 3. Une fois sur l'interface graphique, renseigner le montant, la devise et la description de la transaction. (La transaction sera validé puis annulé directement par la suite pour tester le fonctionnement de l'annulation d'une transaction)
 
-![Interface graphique](interface.png)
+![Interface graphique](./interface.PNG)
 
 4. Si une réelle clé Stripe a été mise, vous pouvez vérifier l'état de la transaction dans le menu "Transaction" de votre tableau de bord Stripe
 
-![Tableau de bord Stripe](stripe.png)
+![Tableau de bord Stripe](./stripe.PNG)
 
 ## Conclusion
 PatternPay offre une solution  extensible pour l'intégration de paiements dans vos applications PHP.
