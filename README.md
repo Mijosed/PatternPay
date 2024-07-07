@@ -22,6 +22,8 @@ PatternPay est une librairie PHP conçue pour faciliter l'intégration et la ges
 
 - PHP 8 ou supérieur
 - Composer
+- Compte Stripe ou Square ou autre
+- Compte mailtrap pour recevoir les notifications
 
 ### Installation
 
